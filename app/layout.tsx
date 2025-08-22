@@ -175,15 +175,16 @@ export default function RootLayout({
         </Script>
 
         {/* Google Analytics */}
-       <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-WZN1NJTYXW"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-WZN1NJTYXW');
-</script>, {
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-WZN1NJTYXW"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-WZN1NJTYXW', {
               page_title: 'Escapada Verde - Fincas Turísticas',
               page_location: window.location.href,
               send_page_view: true,

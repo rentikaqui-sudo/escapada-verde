@@ -8,11 +8,39 @@ import fs from 'fs';
 import path from 'path';
 
 // Initialize Google Sheets
-const serviceAccountAuth = new JWT({
-  email: process.env.GOOGLE_CLIENT_EMAIL,
-  key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  scopes: ['https://www.googleapis.com/auth/spreadsheets']
-});
+const initSheet = async () => {
+  try {
+    console.log('Initializing Google Sheets connection...');
+    const serviceAccountAuth = new JWT({
+      email: process.env.GOOGLE_CLIENT_EMAIL,
+      key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    console.log('Connecting to spreadsheet ID: 1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI');
+    const doc = new GoogleSpreadsheet('1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI', serviceAccountAuth);
+    await doc.loadInfo();
+    console.log('Spreadsheet loaded successfully:', doc.title);
+
+    let sheet = doc.sheetsByIndex[0];
+    if (!sheet) {
+      console.log('Creating new sheet...');
+      sheet = await doc.addSheet({
+        title: 'Leads',
+        headerValues: ['Fecha y Hora', 'Nombre', 'WhatsApp', 'Correo', 'Mensaje', 'Finca de Interés', 'Estado'],
+      });
+      console.log('New sheet created');
+    } else {
+      console.log('Using existing sheet:', sheet.title);
+    }
+
+    return sheet; // ✅ este return está DENTRO del try, y dentro de la función
+  } catch (error) {
+    console.error('Error initializing Google Sheets:', error);
+    return null;
+  }
+};
+
 
     console.log('Connecting to spreadsheet ID: 1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI');
     const doc = new GoogleSpreadsheet('1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI', serviceAccountAuth);

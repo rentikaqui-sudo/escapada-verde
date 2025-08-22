@@ -176,7 +176,7 @@ export default function RootLayout({
 
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-TJ7R4YTPBT"
+          src="https://www.googletagmanager.com/gtag/js?id=G-WZNINJTYXW"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -184,7 +184,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-TJ7R4YTPBT', {
+            gtag('config', 'G-WZNINJTYXW', {
               page_title: 'Escapada Verde - Fincas Turísticas',
               page_location: window.location.href,
               send_page_view: true,

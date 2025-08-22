@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
@@ -102,8 +103,8 @@ export default function RootLayout({
     <html lang="es" className="scroll-smooth">
       <body className={inter.className}>
         {children}
-
-        {/* Schema.org JSON-LD for SEO */}
+        
+        {/* Schema.org JSON-LD for Tourism Business */}
         <Script id="schema-org" type="application/ld+json" strategy="beforeInteractive">
           {`
             {
@@ -173,9 +174,9 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Google Analytics - con el ID nuevo G-WZNINJTYXW */}
+        {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-WZNINJTYXW"
+          src="https://www.googletagmanager.com/gtag/js?id=G-TJ7R4YTPBT"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -183,10 +184,14 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-WZNINJTYXW', {
-              page_title: document.title,
+            gtag('config', 'G-TJ7R4YTPBT', {
+              page_title: 'Escapada Verde - Fincas Turísticas',
               page_location: window.location.href,
-              send_page_view: true
+              send_page_view: true,
+              custom_map: {
+                'dimension1': 'Quindío Tourism',
+                'dimension2': 'Rural Tourism'
+              }
             });
           `}
         </Script>
@@ -194,4 +199,3 @@ export default function RootLayout({
     </html>
   )
 }
-

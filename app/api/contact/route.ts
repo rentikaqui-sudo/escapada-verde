@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
@@ -12,35 +11,10 @@ const initSheet = async () => {
   try {
     console.log('Initializing Google Sheets connection...');
     const serviceAccountAuth = new JWT({
-      email: process.env.GOOGLE_CLIENT_EMAIL,
-      key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      email: "sheets-service@escapada-verde-leads.iam.gserviceaccount.com",
+      key: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC2Obj8q1xA0gmJ\nFig8/F32DLjW97UhRSbKve2wnW77L7igX5fWP7kauvjJeOxk9nE8Pt+KHnnm3PXk\nfYdP7VD4G1StN3eVN8cegmu9FKEdbrFdj4NBsOMc5YDiHe4X15G1rFu7ppu80WHp\ngg9iyUFN4nWf40UsfhYdiY4/v3pdcmEtyqM8RVRYuuf4E8K8Z5bGQ3NxtPdNJqWY\nB8zTdc5tQEd+1UY2c8xCYi0JfPEasatYkunwrXxAugpH83AU2VSGV1n+OnoTjN89\nsdC9MWpKYU88ejaCH3uSMVqTu0gUIzY8boEuVmndRQCkyaWPsPkRXtbMbtvl4y5t\nuqcLFTsnAgMBAAECggEAQlaoQB/YMWblfskYs/8B6+m8vtGl2KtWkHdtWR8vQHWi\nhovWeHJxXkhT+vCxSp4nIhIXii5HHaMyR1DlmlTgZbp5bKflOmb4b+R1+XtRnifm\nnRN6asdNHv90GJ1hyL87NgK90IY6axZkyUAGfuWahxKa1K7Fx4lNXspthUqdbvfw\nIhk4AsMjatiu6RdkbGnApsByuy5E08r6wk6Lv03xrAhqGyk6nGjSPQ/unNH/FWqH\nT7R2ah/S8h0XUHAZTrrOthifE1Wm4X4u4eIm+GunNWMhag3FANFDe7KHeSD5fgnX\ndxMfEK9EQOao05sfMUsMVMSUxaLVdJHNrUIF/LGEnQKBgQDZszjJkvWRXktPLSvP\nz5hiXOveomkjtrdXbMc4ZRjUKl7f/K106rsdXSbDnPalN2F/xXbZwUXCC40YS94r\nVULEzKy67c1xE9mfPXtUqJOnguNkCSpzZhz4+g6CJm7GTAeykemSE1vXqG0fFeQ+\n5JmVLxGn6Yw4KRYH6XczDhmirQKBgQDWSMuQuvHRtes8LJ1pzzLBngfFswR472dw\nk6a06YZN3R3uLG+XrhE69xW4l4zpl42lGAztaJZ4t+Bd1LXl96f4q5yxKoCoaszf\n2Wb9q6N//unmydhagJ253rOMIq2ZzOvwEkr4LJwgf+Oru+igp12RZD9K9tNkMibd\nuWKdkzkjowKBgHSZ98qPehQYa0HHMfYmfLoChxtB5gqI7P5YdwQPshLBdvuFfOpo\nZzw9DmwrgDfRx9kFzLipOlHKmhHvYNnY2uBJuCKPCECOnzsZVRttB1jrVBvahPA2\nO0JnvKmdKCvxwRW17WKeF80Umw3RTeUZz+EFyvEiuEXES9aFB6FC5hwpAoGBANEb\nxJr985FkZ6QXHZ3ttmg/IPKKWajyZwzy6VHOOWOujdCoyFVKZkIWcLnsGnSxkmYz\nbBoZYA150pd+Reuem+oM/iHdiiPP5RHlA540ap8zUWoIOvtGW6TQcIImLSbTVMK3\n9zTrw4frhW9HNiHgcWy6WRF8gJlcX5UrndKLoszlAoGBAJiPrT/YdPK5ImFP+5cp\nur2zq98Xp9tAJQezVeom651jcU2uey44VBO0O76J9q3k15daEzb3tluYo2L6ICuM\nkyH4wUAes8Ct3SuPJcza2t2BpbTg0JK75k28pRhmkwcLTfpXHozB0p8MODCGjoE5\nBjG5U3H0U0UYErck8KkyjjEW\n-----END PRIVATE KEY-----\n",
+      scopes: ['https://www.googleapis.com/auth/spreadsheets']
     });
-
-    console.log('Connecting to spreadsheet ID: 1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI');
-    const doc = new GoogleSpreadsheet('1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI', serviceAccountAuth);
-    await doc.loadInfo();
-    console.log('Spreadsheet loaded successfully:', doc.title);
-
-    let sheet = doc.sheetsByIndex[0];
-    if (!sheet) {
-      console.log('Creating new sheet...');
-      sheet = await doc.addSheet({
-        title: 'Leads',
-        headerValues: ['Fecha y Hora', 'Nombre', 'WhatsApp', 'Correo', 'Mensaje', 'Finca de Interés', 'Estado'],
-      });
-      console.log('New sheet created');
-    } else {
-      console.log('Using existing sheet:', sheet.title);
-    }
-
-    return sheet; // ✅ este return está DENTRO del try, y dentro de la función
-  } catch (error) {
-    console.error('Error initializing Google Sheets:', error);
-    return null;
-  }
-};
-
 
     console.log('Connecting to spreadsheet ID: 1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI');
     const doc = new GoogleSpreadsheet('1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI', serviceAccountAuth);
@@ -162,3 +136,4 @@ ${message ? `Mensaje: ${message}` : 'Sin mensaje adicional'}`);
     );
   }
 }
+

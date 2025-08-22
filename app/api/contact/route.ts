@@ -1,12 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
-// Simplified file storage for now (in production, use a proper database)
-import fs from 'fs';
-import path from 'path';
-
-// Initialize Google Sheets
 async function getSheet() {
   try {
     const serviceAccountAuth = new JWT({
@@ -15,124 +10,46 @@ async function getSheet() {
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
-    console.log('Connecting to spreadsheet ID: 1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI');
-    const doc = new GoogleSpreadsheet('1opSSgrQ6hNhCWWY5pWfmSqa3rMBaB6Ufn_1_wK1AmVI', serviceAccountAuth);
+    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID!, serviceAccountAuth);
     await doc.loadInfo();
-    console.log('Spreadsheet loaded successfully:', doc.title);
-    
+
     let sheet = doc.sheetsByIndex[0];
     if (!sheet) {
-      console.log('Creating new sheet...');
-      sheet = await doc.addSheet({ 
+      sheet = await doc.addSheet({
         title: 'Leads',
-        headerValues: ['Fecha y Hora', 'Nombre', 'WhatsApp', 'Correo', 'Mensaje', 'Finca de Interés', 'Estado']
+        headerValues: ['Fecha y Hora', 'Nombre', 'WhatsApp', 'Correo', 'Mensaje', 'Finca de Interés'],
       });
-      console.log('New sheet created');
-    } else {
-      console.log('Using existing sheet:', sheet.title);
     }
-    
+
     return sheet;
-  } catch (error) {
-    console.error('Error initializing Google Sheets:', error);
+  } catch (err) {
+    console.error('Error en conexión con Sheets:', err);
     return null;
   }
-};
+}
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-    const { name, email, phone, message, finca } = body;
-
-    // Validate required fields
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: 'Nombre, email y mensaje son requeridos' },
-        { status: 400 }
-      );
+    const body = await req.json();
+    const sheet = await getSheet();
+    if (!sheet) {
+      return NextResponse.json({ error: 'No se pudo conectar con Google Sheets' }, { status: 500 });
     }
 
-    // Save to local file (simplified for demo - use database in production)
-    const contactData = {
-      id: Date.now().toString(),
-      name,
-      email,
-      phone: phone || '',
-      message,
-      finca: finca || '',
-      createdAt: new Date().toISOString()
-    };
-
-    try {
-      const dataDir = path.join(process.cwd(), 'data');
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-      }
-      
-      const filePath = path.join(dataDir, 'contacts.jsonl');
-      const dataLine = JSON.stringify(contactData) + '\n';
-      fs.appendFileSync(filePath, dataLine);
-    } catch (fileError) {
-      console.error('Error saving to file:', fileError);
-    }
-
-    // Save to Google Sheets
-    try {
-      console.log('Attempting to save to Google Sheets...');
-      const sheet = await initSheet();
-      if (sheet) {
-        console.log('Sheet initialized successfully, adding row...');
-        const currentDate = new Date();
-        const rowData = {
-          'Fecha y Hora': currentDate.toLocaleString('es-CO', {
-            year: 'numeric',
-            month: '2-digit', 
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            timeZone: 'America/Bogota'
-          }),
-          'Nombre': name,
-          'WhatsApp': phone || '',
-          'Correo': email,
-          'Mensaje': message,
-          'Finca de Interés': finca || 'No especificada',
-          'Estado': 'Nuevo'
-        };
-        console.log('Row data:', rowData);
-        await sheet.addRow(rowData);
-        console.log('Row added successfully to Google Sheets');
-      } else {
-        console.error('Failed to initialize Google Sheets');
-      }
-    } catch (sheetsError) {
-      console.error('Error saving to Google Sheets:', sheetsError);
-      console.error('Sheets error details:', JSON.stringify(sheetsError, null, 2));
-    }
-
-    // Generate WhatsApp message (simplified to avoid rejections)
-    const whatsappMessage = encodeURIComponent(`Hola! Me interesa conocer más sobre Escapada Verde.
-
-Nombre: ${name}
-Email: ${email}${phone ? `
-WhatsApp: ${phone}` : ''}${finca ? `
-Finca de interés: ${finca}` : ''}
-
-${message ? `Mensaje: ${message}` : 'Sin mensaje adicional'}`);
-    
-    return NextResponse.json({
-      success: true,
-      id: contactData.id,
-      whatsappUrl: `https://api.whatsapp.com/send?phone=573218613644&text=${whatsappMessage}`
+    await sheet.addRow({
+      'Fecha y Hora': new Date().toLocaleString('es-CO'),
+      'Nombre': body.name,
+      'WhatsApp': body.phone,
+      'Correo': body.email,
+      'Mensaje': body.message,
+      'Finca de Interés': body.property,
     });
 
-  } catch (error) {
-    console.error('Error processing contact form:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('Error guardando lead:', err);
+    return NextResponse.json({ error: 'Error interno' }, { status: 500 });
   }
 }
+
 

@@ -1,0 +1,19 @@
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://escapadaverde.co/sitemap.xml
+
+# Crawl-delay for better server performance
+Crawl-delay: 1
+
+# Block access to sensitive areas
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /.well-known/
+
+# Allow important pages for SEO
+Allow: /images/
+Allow: /favicon.ico

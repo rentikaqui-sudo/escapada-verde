@@ -1,4 +1,3 @@
-
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
@@ -176,7 +175,7 @@ export default function RootLayout({
 
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-WZN1NJTYXW"
+          src="https://www.googletagmanager.com/gtag/js?id=G-TJ7R4YTPBT"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -184,7 +183,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-WZN1NJTYXW', {
+            gtag('config', 'G-TJ7R4YTPBT', {
               page_title: 'Escapada Verde - Fincas Turísticas',
               page_location: window.location.href,
               send_page_view: true,

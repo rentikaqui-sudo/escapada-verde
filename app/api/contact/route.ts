@@ -8,22 +8,22 @@ const initSheet = async () => {
   try {
     console.log('Initializing Google Sheets connection...');
     const serviceAccountAuth = new JWT({
-      // Usa variables de entorno para mayor seguridad
-      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      // Usamos el operador "!" para decirle a TypeScript que estas variables existen.
+      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!,
       // Esta línea es crucial para que los saltos de línea funcionen en Vercel
-      key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     });
 
     console.log('Connecting to spreadsheet ID:', process.env.GOOGLE_SHEET_ID);
-    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID, serviceAccountAuth);
+    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID!, serviceAccountAuth);
     await doc.loadInfo();
     console.log('Spreadsheet loaded successfully:', doc.title);
-    
+
     let sheet = doc.sheetsByIndex[0];
     if (!sheet) {
       console.log('Creating new sheet...');
-      sheet = await doc.addSheet({ 
+      sheet = await doc.addSheet({
         title: 'Leads',
         headerValues: ['Fecha y Hora', 'Nombre', 'WhatsApp', 'Correo', 'Mensaje', 'Finca de Interés', 'Estado']
       });
@@ -31,7 +31,7 @@ const initSheet = async () => {
     } else {
       console.log('Using existing sheet:', sheet.title);
     }
-    
+
     return sheet;
   } catch (error) {
     console.error('Error initializing Google Sheets:', error);
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         const rowData = {
           'Fecha y Hora': currentDate.toLocaleString('es-CO', {
             year: 'numeric',
-            month: '2-digit', 
+            month: '2-digit',
             day: '2-digit',
             hour: '2-digit',
             minute: '2-digit',
@@ -94,7 +94,7 @@ Email: ${email}${phone ? `
 WhatsApp: ${phone}` : ''}${finca ? `
 Finca de interés: ${finca}` : ''}
 ${message ? `Mensaje: ${message}` : 'Sin mensaje adicional'}`);
-    
+
     return NextResponse.json({
       success: true,
       whatsappUrl: `https://api.whatsapp.com/send?phone=573218613644&text=${whatsappMessage}`
